@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Clics</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            background-color: #240342;
+            color: rgb(15, 207, 159);
+            font-family: system-ui, sans-serif;
+            display: grid;
+            place-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .stat {
+            font-size: 5rem;
+            font-weight: bold;
+        }
+        button {
+            background-color: #6123d3;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <h1>{{ titulo }}</h1>
+    <div class="stat">{{ valorPrincipal }}</div>
+    <p>{{ subtitulo }}</p>
+    <button @click="accionBoton" :disabled="botonDesactivado">
+        {{ textoBoton }}
+    </button>
+</div>
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                contador: 0,
+                tiempo: 10,
+                juegoActivo: false,
+                intervalo: null
+            }
+        },
+        computed: {
+            titulo() {
+                return this.juegoActivo ? '¡Haz click!' : 'Se acabo el juego';
+            },
+            valorPrincipal() {
+                return this.juegoActivo ? this.tiempo : this.contador;
+            },
+            subtitulo() {
+                return this.juegoActivo ? 'Tiempo restante' : 'Clicks totales';
+            },
+            textoBoton() {
+                return this.juegoActivo ? '¡Click!' : 'Jugar otra vez';
+            },
+            botonDesactivado() {
+                return this.juegoActivo && this.tiempo === 0;
+            }
+        },
+        methods: {
+            accionBoton() {
+                if (this.juegoActivo) {
+                    this.contador++;
+                } else {
+                    this.iniciarJuego();
+                }
+            },
+            iniciarJuego() {
+                this.contador = 0;
+                this.tiempo = 15;
+                this.juegoActivo = true;
+                this.intervalo = setInterval(() => {
+                    if (this.tiempo > 0) {
+                        this.tiempo--;
+                    } else {
+                        this.juegoActivo = false;
+                        clearInterval(this.intervalo);
+                    }
+                }, 1000);
+            }
+        },
+        mounted() {
+        }
+    }).mount('#app');
+</script>
+
+</body>
+</html>
